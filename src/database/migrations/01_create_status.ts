@@ -2,13 +2,12 @@ import {Knex} from 'Knex'
 
 export async function up(knex: Knex){
     return knex.schema.createTable('status', table => {
-        table.increments('id_status')
-            .primary()
-            .references('id')
-            .inTable('users')
-            .onUpdate('CASCADE')
-            .onDelete('CASCADE')
+        table.increments('id').primary();
 
+        table.integer('user').unsigned()
+            .references('users.id')
+            .onUpdate('CASCADE')
+            .onDelete('cascade')
 
         table.integer('level').notNullable();
         table.integer('experience').notNullable();
