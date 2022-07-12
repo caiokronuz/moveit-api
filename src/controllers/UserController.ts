@@ -19,12 +19,12 @@ export default class UserController {
         let {name, email, password} = req.body;
 
         if(!name || !email || !password){
-            return res.status(400).send({error: "Invalid data, verify your informations and try again"})
+            return res.status(400).send({error: "Dados faltando. verifique suas informações e tente novamente."})
         }
 
         const verifyEmail = await verifyUserEmail(email);
         if(verifyEmail == 1){
-            return res.status(400).send({error: "User already exists"});
+            return res.status(400).send({error: "Já existe um usuário cadastrado com esse email."});
         }
 
         password = await bcrypt.hash(password, 10)
@@ -42,17 +42,23 @@ export default class UserController {
 
             await database('status').insert({
                 user: user_id,
-                level: 0,
+                level: 1,
                 experience: 0,
                 challenges_completed: 0
             });
 
+            const user = await database('users').whereRaw('id = ?', [user_id]);
+            const status = await database('status').whereRaw('user = ?', [user_id]);
+            const token = generateToken(user_id);
+
+            user[0].password = undefined;
+
             await database.commit();
-            return res.status(200).send({success: "User registered successfully!"})
+            return res.status(200).send({user, status, token})
         }catch(err){
             console.log(err);
             await database.rollback();
-            return res.status(500).send({error: "Unexpected error while creating your account, please try again"})
+            return res.status(500).send({error: "Ocorreu um erro inesperado enquanto estavamos criando sua conta. Por favor tente novamente."})
         }
     }
 
@@ -60,12 +66,12 @@ export default class UserController {
         let {email, password} = req.body;
        
         if(!email || !password){
-            return res.status(400).send({error: "Invalid data, verify your informations and try again"})
+            return res.status(400).send({error: "Dados faltando. Verifique suas informações e tente novamente"})
         }
 
         const verifyEmail = await verifyUserEmail(email);
         if(verifyEmail == 0){
-            return res.status(400).send({error: "Email or password invalid"});
+            return res.status(400).send({error: "Email ou senha incorreto"});
         }
 
         try{
@@ -73,7 +79,7 @@ export default class UserController {
             const status = await db('status').whereRaw('user = ?', [user[0].id]);
 
             if(!await bcrypt.compare(password, user[0].password)){
-                return res.status(400).send({error: "Email or password invalid"});
+                return res.status(400).send({error: "Email ou senha incorreto"});
             }
 
             user[0].password = undefined;
@@ -84,7 +90,7 @@ export default class UserController {
 
         }catch(err){
             console.log(err);
-            return res.status(400).send({error: "Unexpected error while authenticate your account, please try again"})
+            return res.status(400).send({error: "Ocorreu um erro inesperado enquanto autenticavamos sua conta. Por favor tente novamente."})
         }
     }
 
