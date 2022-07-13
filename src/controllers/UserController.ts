@@ -3,13 +3,15 @@ import db from '../database/connection';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-function generateToken(id){
-    return jwt.sign({id}, process.env.SECRET_TOKEN, {
+const SECRET_TOKEN: any = process.env.SECRET_TOKEN;
+
+function generateToken(id: number){
+    return jwt.sign({id}, SECRET_TOKEN, {
         expiresIn: 86400,
     })
 }
 
-async function verifyUserEmail(email){
+async function verifyUserEmail(email: string){
     const user = await db('users').whereRaw('users.email = ?', [email]);
     return user.length;
 }
