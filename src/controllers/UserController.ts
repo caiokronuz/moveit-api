@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 function generateToken(id){
-    return jwt.sign({id}, 'test', {
+    return jwt.sign({id}, process.env.SECRET_TOKEN, {
         expiresIn: 86400,
     })
 }
