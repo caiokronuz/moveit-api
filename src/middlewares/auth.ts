@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+const SECRET_TOKEN: any = process.env.SECRET_TOKEN;
 
 export const verifyAuth = (req: any, res:any, next:any) => {
     const authHeader = req.headers.authorization;
@@ -19,7 +20,7 @@ export const verifyAuth = (req: any, res:any, next:any) => {
         return res.status(401).send({error: "Token malformatted"});
     }
 
-    jwt.verify(token, 'test', (err: any, decoded: any) => {
+    jwt.verify(token, SECRET_TOKEN, (err: any, decoded: any) => {
         if(err){
             return res.status(401).send({error: "Token invalid"});
         }
