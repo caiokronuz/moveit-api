@@ -2,7 +2,10 @@ import {Request, Response} from 'express';
 import db from '../database/connection';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv'
 
+dotenv.config();
+ 
 const SECRET_TOKEN: any = process.env.SECRET_TOKEN;
 
 function generateToken(id: number){
