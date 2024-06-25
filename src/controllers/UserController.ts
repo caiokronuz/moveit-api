@@ -6,12 +6,16 @@ import dotenv from 'dotenv'
 
 dotenv.config();
  
-const SECRET_TOKEN: any = process.env.SECRET_TOKEN;
+const SECRET_TOKEN: string | undefined = process.env.SECRET_TOKEN;
 
 function generateToken(id: number){
-    return jwt.sign({id}, SECRET_TOKEN, {
-        expiresIn: 86400,
-    })
+    if(SECRET_TOKEN){
+        return jwt.sign({id}, SECRET_TOKEN, {
+            expiresIn: 86400,
+        })
+    }else{
+        console.log("no secret provided")
+    }
 }
 
 async function verifyUserEmail(email: string){

@@ -1,8 +1,16 @@
 import jwt from 'jsonwebtoken';
-const SECRET_TOKEN: any = process.env.SECRET_TOKEN;
+import dotenv from "dotenv"
+
+dotenv.config();
 
 export const verifyAuth = (req: any, res:any, next:any) => {
     const authHeader = req.headers.authorization;
+
+    const SECRET_TOKEN: string | undefined = process.env.SECRET_TOKEN
+
+    if(!SECRET_TOKEN){
+        return res.status(401).send({error: "No secret provided"})
+    }
 
     if(!authHeader){
         return res.status(401).send({error: "No token provided"});
@@ -19,6 +27,7 @@ export const verifyAuth = (req: any, res:any, next:any) => {
     if(scheme != "Bearer"){
         return res.status(401).send({error: "Token malformatted"});
     }
+
 
     jwt.verify(token, SECRET_TOKEN, (err: any, decoded: any) => {
         if(err){

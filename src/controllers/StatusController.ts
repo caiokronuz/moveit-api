@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import db from '../database/connection';
 
 export default class StatusController{
-    async update(req: any, res: Response){
+    async update(req: Request, res: Response){
         const id = req.userId;
         const {level, experience, challenges_completed} = req.body;
 
@@ -17,7 +17,7 @@ export default class StatusController{
                 challenges_completed
             })
 
-            return res.send();
+            return res.status(200).send({message: "status successfully updated"});
         }catch(err){
             console.log(err);
             return res.status(500).send({error: "Unexpected error while updating your status, please try again"})
