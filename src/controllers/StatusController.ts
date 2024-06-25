@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import db from '../database/connection';
 
 export default class StatusController{
-    async update(req: Request, res: Response){
+    async update(req: any, res: Response){
         const id = req.userId;
         const {level, experience, challenges_completed} = req.body;
 
